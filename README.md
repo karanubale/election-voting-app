@@ -15,7 +15,9 @@
 
 
 
-# Backend Application
+
+
+# Voting Application
 
 This is a **Voting backend application** built with Node.js, Express.js, Mongoose, and other dependencies. It provides APIs for user and candidate management, including authentication via JWT tokens.
 
