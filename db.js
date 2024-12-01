@@ -7,8 +7,8 @@ const mongoURL = process.env.DB_URL_LOCAL
 
 
 mongoose.connect(mongoURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true
 })
 
 

@@ -16,6 +16,18 @@ const checkAdminRole = async (userID) => {
     }
 }
 
+const checkOfficerRole = async (userID) => {
+    try {
+        const user = await User.findById(userID);
+        if (user.role === 'officer') {
+            return true;
+        }
+    } catch (err) {
+        return false;
+    }
+}
+
+
 router.post('/', jwtAuthMiddleware, async (req, res) => {
     try {
         if (!(await checkAdminRole(req.user.id)))
@@ -154,5 +166,42 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
+
+router.get('/check', jwtAuthMiddleware, async (req, res) => {
+    try {
+        // Check if the user has the officer role
+        if (!(await checkOfficerRole(req.user.id))) {
+            return res.status(403).json({ message: 'User does not have officer role' });
+        }
+
+        // Fetch all candidates and their vote counts
+        const candidates = await Candidate.find({}, 'name voteCount');
+
+        // Sort candidates by vote count in descending order
+        const sortedCandidates = candidates.sort((a, b) => b.voteCount - a.voteCount);
+
+        // Prepare the response data
+        const voteSummary = sortedCandidates.map(candidate => ({
+            name: candidate.name,
+            voteCount: candidate.voteCount
+        }));
+
+        // Identify the leading candidate (first in the sorted list)
+        const leadingCandidate = sortedCandidates[0] ? sortedCandidates[0].name : null;
+
+        // Response with the vote summary and leading candidate
+        res.status(200).json({
+            voteSummary,
+            leadingCandidate
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 module.exports = router;

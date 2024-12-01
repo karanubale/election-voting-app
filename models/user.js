@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['voter', 'admin'],
+        enum: ['voter', 'admin','officer'],
         default: 'voter'
     },
     isVoted: {
